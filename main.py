@@ -6,6 +6,7 @@ class VisitorsAnalyticsUtils:
     def loadDataFile(self, fileName):
         df = pd.read_csv(fileName)
         # display the first 5 rows of the dataframe
+        print("\n*** First 5 rows of data loaded ***")
         print(df.head())
         return df
 
@@ -84,10 +85,21 @@ class VisitorsAnalyticsUtils:
         selected_times = [int(formatted_times[selector]) for selector in selected]
         df.iloc[:, 0] = selected_times
         df.rename(columns={"   ": "year"}, inplace=True)
-        print(df)
-        print("*** Parsed Data (Years)***")
+        print("\n*** Parsed Data (Regions)***")
+        print(df.info())
+        print("\n*** Parsed Data (Years)***")
         print(df.year.describe())
-        # print(selected)
+        return df
+
+    def getTop3Countries(self, df):
+        print("\n*** Top 3 Countries ***")
+        # remove first column
+        df = df.iloc[:, 1:]
+        # remove comma from all values in the dataframe and convert to int
+        df = df.apply(lambda x: x.str.replace(",", "").astype(int))
+        # get sum of each column and sort in descending order
+        df = df.sum(axis=0).sort_values(ascending=False)
+        print(df)
 
 
 time_period = ["1978-1987", "1988-1997", "1998-2007", "2008-2017"]
@@ -101,5 +113,6 @@ region_index = int(input())
 
 worker = VisitorsAnalyticsUtils()
 df = worker.loadDataFile("./Int_Monthly_Visitor.csv")
-worker.parseData(df, time_period_index, region_index)
+df = worker.parseData(df, time_period_index, region_index)
+worker.getTop3Countries(df)
 # print(df.columns)

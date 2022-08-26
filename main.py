@@ -1,11 +1,12 @@
 import pandas as pd
 
-
 # define class VisitorsAnalyticsUtils to perform data analysis
 class VisitorsAnalyticsUtils:
     def loadDataFile(self, fileName):
-        df = pd.read_csv(fileName)
+        df = pd.read_csv(fileName, na_values=" na ")
         # display the first 5 rows of the dataframe
+        # replace all na values with 0
+        df = df.fillna(0)
         print("\n*** First 5 rows of data loaded ***")
         print(df.head())
         return df
@@ -96,7 +97,9 @@ class VisitorsAnalyticsUtils:
         # remove first column
         df = df.iloc[:, 1:]
         # remove comma from all values in the dataframe and convert to int
-        df = df.apply(lambda x: x.str.replace(",", "").astype(int))
+        df = df.apply(lambda x: x.str.replace(",", ""))
+        # make sure values are numeric
+        df = df.apply(pd.to_numeric)
         # get sum of each column and sort in descending order
         df = df.sum(axis=0).sort_values(ascending=False)
         print(df)

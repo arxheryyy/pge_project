@@ -1,17 +1,21 @@
 import pandas as pd
 
-# define class VisitorsAnalyticsUtils to perform data analysis
+
 class VisitorsAnalyticsUtils:
+    # Load data from csv file
     def loadDataFile(self, fileName):
+        # load data from csv file
         df = pd.read_csv(fileName, na_values=" na ")
-        # display the first 5 rows of the dataframe
-        # replace all na values with 0
+        # fill missing values with 0
         df = df.fillna(0)
+        # print first 5 rows of dataframe
         print("\n*** First 5 rows of data loaded ***")
         print(df.head())
         return df
 
+    # Parse data
     def parseData(self, df, period, region):
+        # parse data based on region from user input
         if region == 0:
             df = df[
                 [
@@ -64,10 +68,11 @@ class VisitorsAnalyticsUtils:
                     " Africa ",
                 ]
             ]
-
+        # parse date from dataframe
         times = df.iloc[:, 0].to_list()
         formatted_times = [time.split(" ")[1] for time in times]
         selected = []
+        # loop through year column and filter out the data based on period
         for index, time in enumerate(formatted_times):
             if period == 0:
                 if int(time) >= 1978 and int(time) <= 1987:
@@ -81,10 +86,13 @@ class VisitorsAnalyticsUtils:
             if period == 3:
                 if int(time) >= 2008 and int(time) <= 2017:
                     selected.append(index)
+        # select data based on selected index
         df = df.filter(items=selected, axis=0)
-        # replace first column with formatted times with the selected indexes
+        # get year from selected indexes
         selected_times = [int(formatted_times[selector]) for selector in selected]
+        # replace first column with selected times
         df.iloc[:, 0] = selected_times
+        # replace "   " with "year" for readability
         df.rename(columns={"   ": "year"}, inplace=True)
         print("\n*** Parsed Data (Regions)***")
         print(df.info())
@@ -102,20 +110,22 @@ class VisitorsAnalyticsUtils:
         df = df.apply(pd.to_numeric)
         # get sum of each column and sort in descending order
         df = df.sum(axis=0).sort_values(ascending=False)
-        print(df)
+        # print top 3 countries
+        print(df.head(3))
 
 
-time_period = ["1978-1987", "1988-1997", "1998-2007", "2008-2017"]
-region = ["asia", "europe", "others"]
+if __name__ == "__main__":
+    time_period = ["1978-1987", "1988-1997", "1998-2007", "2008-2017"]
+    region = ["asia", "europe", "others"]
 
-# prompt user to enter time period and region
-print("Enter time period (0: 1978-1987, 1: 1988-1997, 2: 1998-2007, 3: 2008-2017):")
-time_period_index = int(input())
-print("Enter region (0: asia, 1: europe, 2: others):")
-region_index = int(input())
+    # prompt user to enter time period and region
+    print("Enter time period (0: 1978-1987, 1: 1988-1997, 2: 1998-2007, 3: 2008-2017):")
+    time_period_index = int(input())
+    print("Enter region (0: asia, 1: europe, 2: others):")
+    region_index = int(input())
 
-worker = VisitorsAnalyticsUtils()
-df = worker.loadDataFile("./Int_Monthly_Visitor.csv")
-df = worker.parseData(df, time_period_index, region_index)
-worker.getTop3Countries(df)
-# print(df.columns)
+    worker = VisitorsAnalyticsUtils()
+    df = worker.loadDataFile("./Int_Monthly_Visitor.csv")
+    df = worker.parseData(df, time_period_index, region_index)
+    worker.getTop3Countries(df)
+    # print(df.columns)

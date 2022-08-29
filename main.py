@@ -69,8 +69,11 @@ class VisitorsAnalyticsUtils:
                 ]
             ]
         # parse date from dataframe
+        # convert first column to list
         times = df.iloc[:, 0].to_list()
+        # loop through and grab the year from the data
         formatted_times = [time.split(" ")[1] for time in times]
+        # list for indexes that match the period
         selected = []
         # loop through year column and filter out the data based on period
         for index, time in enumerate(formatted_times):
@@ -104,7 +107,7 @@ class VisitorsAnalyticsUtils:
         print("\n*** Top 3 Countries ***")
         # remove first column
         df = df.iloc[:, 1:]
-        # remove comma from all values in the dataframe and convert to int
+        # remove comma from all values in the dataframe
         df = df.replace(",", "", regex=True)
         # make sure values are numeric
         df = df.apply(pd.to_numeric)
@@ -125,7 +128,9 @@ if __name__ == "__main__":
     region_index = int(input())
 
     worker = VisitorsAnalyticsUtils()
+    # Load data from csv file
     df = worker.loadDataFile("./Int_Monthly_Visitor.csv")
+    # Parse data based on user input
     df = worker.parseData(df, time_period_index, region_index)
+    # Get top 3 countries
     worker.getTop3Countries(df)
-    # print(df.columns)

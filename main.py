@@ -105,7 +105,6 @@ class VisitorsAnalyticsUtils:
         # remove first column
         df = df.iloc[:, 1:]
         # remove comma from all values in the dataframe and convert to int
-        print(df)
         df = df.replace(",", "", regex=True)
         # make sure values are numeric
         df = df.apply(pd.to_numeric)
